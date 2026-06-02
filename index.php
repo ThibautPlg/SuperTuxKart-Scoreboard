@@ -193,7 +193,7 @@ if(!$dbConnect) {
 			// What is displayed when landing on the page without any filters
 
 			$stmt = $dbConnect->prepare("
-				SELECT MAX(time), username, venue, reverse, mode, laps, MIN(result), kart
+				SELECT MAX(time), username, venue, reverse, mode, laps, MIN(fastest_lap), kart
 				FROM v1_server_config_results
 				WHERE username NOT NULL "
 				. (empty($reverse) ? "" : "AND reverse = :reverse ")
@@ -218,7 +218,7 @@ if(!$dbConnect) {
 						$record['mode'],
 						$record['laps'],
 						$record['username'],
-						$record['MIN(result)'],
+						$record['MIN(fastest_lap)'],
 						$label[$record['reverse']],
 						$label[$record['mode']],
 						$label['more'],
@@ -237,7 +237,7 @@ if(!$dbConnect) {
             foreach ($track as $currentTrack) {
                 $laps = $_GET['laps']; $laps = $laps ?: $currentTrack[2];
                 $stmt = $dbConnect->prepare("
-                    SELECT username, reverse, mode, result, kart
+                    SELECT username, reverse, mode, fastest_lap, kart
                     FROM v1_server_config_results
                     WHERE venue = :venue "
                     . (empty($reverse) ? "" : "AND reverse = :reverse ")
@@ -253,7 +253,7 @@ if(!$dbConnect) {
 
                 $record = $result->fetchArray(SQLITE3_ASSOC);
 
-                if (isset($record['result'])) {
+                if (isset($record['fastest_lap'])) {
                     displayRow(
                         $currentTrack[1],
                         $currentTrack[0],
@@ -261,7 +261,7 @@ if(!$dbConnect) {
                         $record['mode'],
                         $laps,
                         $record['username'],
-                        $record['result'],
+                        $record['fastest_lap'],
                         $label[$record['reverse']],
                         $label[$record['mode']],
                         $label['more'],
@@ -280,8 +280,8 @@ if(!$dbConnect) {
 
         $stmt = $dbConnect->prepare("
             SELECT username, reverse, mode, "
-            . (empty($unique) ? "result, ": "MIN(result), ") .
-            "ROW_NUMBER() OVER(ORDER BY result ASC) as '#', kart
+            . (empty($unique) ? "fastest_lap, ": "MIN(fastest_lap), ") .
+            "ROW_NUMBER() OVER(ORDER BY fastest_lap ASC) as '#', kart
             FROM v1_server_config_results
             WHERE venue = :venue "
             . (empty($reverse) ? "" :"AND reverse = :reverse ")
@@ -304,7 +304,7 @@ if(!$dbConnect) {
                 $record['mode'],
                 $laps,
                 $record['username'],
-                empty($unique)?$record['result']:$record['MIN(result)'],
+                empty($unique)?$record['fastest_lap']:$record['MIN(fastest_lap)'],
                 $label[$record['reverse']],
                 $label[$record['mode']],
                 $label['more'],
