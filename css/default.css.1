@@ -215,8 +215,6 @@ table th {
 }
 
 /* ── Responsive ───────────────────────── */
-
-/* Tablet : réduction légère */
 @media (max-width: 900px) {
     .rowbox {
         display: block;
@@ -224,183 +222,16 @@ table th {
         text-align: center;
     }
 
+    .tablebox {
+        font-size: smaller;
+        width: 100%;
+        min-width: 900px;
+        height: 500px;
+    }
+
     form > table td {
         border-right: none;
         border-bottom: 1px solid var(--primary-pale) !important;
     }
 }
-
-/* ── Mobile : formulaire empilé ───────── */
-@media (max-width: 640px) {
-
-    body {
-        font-size: 1.5rem;
-    }
-
-    /* Le tableau HTML du formulaire devient un bloc flex vertical */
-    form > table,
-    form > table tbody,
-    form > table tr,
-    form > table td {
-        display: block !important;
-        width: 100% !important;
-        border: none !important;
-        padding: 0 !important;
-    }
-
-    /* La cellule rowspan=2 du bouton : masquée dans son tr d'origine,
-       on réaffiche la cellule btn de la 2e ligne (qui n'existe pas côté HTML —
-       le bouton est dans tr:first-child td:last-child avec rowspan=2).
-       On la remet visible et on la place à la fin. */
-    form > table tr:first-child td:last-child {
-        order: 10;
-        display: block !important;
-    }
-
-    form > table {
-        padding: 1rem !important;
-        border: 1.5px solid var(--border) !important;
-        border-radius: var(--radius-lg) !important;
-        margin: 1rem !important;
-        width: auto !important;
-    }
-
-    .records_form {
-        margin: 0.6rem 0;
-        padding: 0.5rem 0.6rem;
-        background: var(--bg);
-        border-radius: 8px;
-    }
-
-    .records_form b {
-        margin-bottom: 0.4em;
-    }
-
-    select {
-        width: 100%;
-        max-width: 100%;
-    }
-
-    /* Bouton Submit : pleine largeur, tout en bas */
-    .btn {
-        margin-top: 0.8rem;
-    }
-
-    .btn input[type="submit"] {
-        width: 100%;
-        padding: 1em;
-    }
-
-    /* ── Tableau → cartes empilées ─────── */
-    .tablebox {
-        height: auto !important;
-        max-width: 100% !important;
-        min-width: 0 !important;
-        overflow: visible !important;
-        margin: 0.5rem !important;
-        width: auto !important;
-        border-radius: var(--radius-lg);
-    }
-
-    /* On cache l'en-tête classique */
-    .tablebox table thead,
-    .tablebox table tr:first-child {
-        display: none !important;
-    }
-
-    /* Le tableau et ses lignes deviennent des blocs */
-    .tablebox table,
-    .tablebox table tbody,
-    .tablebox table tr,
-    .tablebox table td {
-        display: block !important;
-        width: 100% !important;
-    }
-
-    .tablebox table {
-        box-shadow: none !important;
-        background: transparent !important;
-        border: none !important;
-        margin: 0 !important;
-    }
-
-    /* Chaque ligne = une carte */
-    .tablebox table tr {
-        background: var(--bg-card);
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow);
-        margin-bottom: 1rem;
-        padding: 1rem 1.2rem;
-        border: 1.5px solid var(--border);
-        position: relative;
-    }
-
-    .tablebox table tr:hover {
-        background: var(--row-hover);
-    }
-
-    /* Toutes les cellules : inline-block avec label data-label */
-    .tablebox table td {
-        border: none !important;
-        padding: 0.3em 0 !important;
-        background: transparent !important;
-        display: flex !important;
-        align-items: center;
-        gap: 0.6em;
-        font-size: 1.5rem;
-    }
-
-    /* Labels fixes par position de colonne (pas de data-label dans le HTML) */
-    .tablebox table td::before {
-        font-size: 1.1rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.07em;
-        color: var(--primary);
-        min-width: 7em;
-        flex-shrink: 0;
-    }
-    .tablebox table td:nth-child(1)::before { content: "Track"; }
-    .tablebox table td:nth-child(2)::before { content: "Icon"; }
-    .tablebox table td:nth-child(3)::before { content: "Direction"; }
-    .tablebox table td:nth-child(4)::before { content: "Mode"; }
-    .tablebox table td:nth-child(5)::before { content: "Laps"; }
-    .tablebox table td:nth-child(6)::before { content: "Player"; }
-    .tablebox table td:nth-child(7)::before { content: "Result"; }
-    .tablebox table td:nth-child(8)::before { content: ""; min-width: 0; }
-
-    /* Icône de piste : pas de zoom au hover sur mobile */
-    .trackicon {
-        max-width: 40px;
-        margin: 0;
-    }
-
-    tr:hover .trackicon {
-        transform: none;
-    }
-
-    /* Colonne résultat */
-    .tablebox table td:nth-child(7) {
-        font-size: 1.5rem;
-    }
-
-    /* Lien "more" : pleine largeur */
-    .tablebox table td:last-child {
-        margin-top: 0.4em;
-        justify-content: flex-end;
-    }
-
-    td a {
-        width: 100%;
-        text-align: center;
-        padding: 0.4em 1em;
-    }
-
-    /* playerTag dans les cartes */
-    .playerTag {
-        display: inline-flex;
-        align-items: center;
-    }
-}
-
 
