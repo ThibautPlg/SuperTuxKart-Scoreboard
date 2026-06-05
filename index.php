@@ -1,8 +1,8 @@
 <?php
 
 // Set SQLite3 database to be used
-$dbConnect = new SQLite3('/app/stk2/config/stkservers.db');
-//$dbConnect = new SQLite3('./stkservers.db');
+//$dbConnect = new SQLite3('/app/stk2/config/stkservers.db');
+$dbConnect = new SQLite3('./stkservers.db');
 
 
 const hideFilters = true;
@@ -72,6 +72,9 @@ function displayRow($trackName, $icon, $reverse, $mode, $laps, $username, $resul
     <link rel="stylesheet" href="./css/default.css" />
     <link rel="stylesheet" href="./css/more-style.css" />
     <link rel="stylesheet" href="./css/players.css" />
+	<!-- <script src="js/jquery-1.12.4.min.js"></script>
+	<script src="js/jquery.filtertable.min.js"></script>
+	<script src="js/scripts.js"></script> -->
 </head>
 <body style="background-color:#F5EFE0">
 	<div class="titlebar">
@@ -83,7 +86,7 @@ function displayRow($trackName, $icon, $reverse, $mode, $laps, $username, $resul
 	</div>
 <?php if (!hideFilters) { ?>
     <form action="" method="GET">
-        <table style='max-width:1200px; margin-left: auto; margin-right: auto'>
+        <table style='max-width:1200px; margin-left: auto; margin-right: auto' class="sortable">
             <tr>
                 <td style='padding-top: 0.1em;padding-bottom: 0.1em;'>
                     <div class="records_form" style='text-align: left;'>
@@ -189,43 +192,52 @@ if(!$dbConnect) {
     if (empty($venue)) {
         if($recent == true){
 
-			// Display 25 latest Highscores over all tracks, respecting different modes and number of laps
+			// Display 100 latest Highscores over all tracks, respecting different modes and number of laps
 			// What is displayed when landing on the page without any filters
 
+
+			// SELECT MAX(time), username, venue, reverse, mode, laps, MIN(fastest_lap), kart FROM v1_server_config_results WHERE username NOT NULL GROUP BY venue, reverse, mode, laps ORDER BY MAX(time) DESC LIMIT 50;
 			$stmt = $dbConnect->prepare("
 				SELECT MAX(time), username, venue, reverse, mode, laps, MIN(fastest_lap), kart
 				FROM v1_server_config_results
 				WHERE username NOT NULL "
-				. (empty($reverse) ? "" : "AND reverse = :reverse ")
+				// . (empty($reverse) ? "" : "AND reverse = :reverse ")
 				. (empty($mode) ? "" : "AND mode = :mode ")
-				. (empty($laps) ? "" : "AND laps = :laps ") .
-				"GROUP BY venue, reverse, mode, laps
-				ORDER BY MAX(time) DESC LIMIT 50
+				// . (empty($laps) ? "" : "AND laps = :laps ")
+				// Weird STK bug that somehow logs a '-1.0' time for a lap sometimes. Let's ignore it.
+				. " AND fastest_lap != '-1.0' 	" .
+				" GROUP BY venue, reverse, mode, laps
+				ORDER BY MAX(time) DESC LIMIT 100
 			");
-			if(!empty($reverse)) $stmt->bindValue(':reverse', $reverse, SQLITE3_TEXT);
+			// if(!empty($reverse)) $stmt->bindValue(':reverse', $reverse, SQLITE3_TEXT);
 			if(!empty($mode)) $stmt->bindValue(':mode', $mode, SQLITE3_TEXT);
-			if(!empty($laps)) $stmt->bindValue(':laps', $laps, SQLITE3_INTEGER);
+			// if(!empty($laps)) $stmt->bindValue(':laps', $laps, SQLITE3_INTEGER);
 
 			$result = $stmt->execute();
 
 			while ($record = $result->fetchArray(SQLITE3_ASSOC)) {
-			$tracknr=array_search($record['venue'], array_column($track,0));
-				if($tracknr!=false) {
-					displayRow(
-						$track[$tracknr][1],
-						$record['venue'],
-						$record['reverse'],
-						$record['mode'],
-						$record['laps'],
-						$record['username'],
-						$record['MIN(fastest_lap)'],
-						$label[$record['reverse']],
-						$label[$record['mode']],
-						$label['more'],
-						$record['MAX(time)'],
-						$record['kart']
-					);
+				$tracknr=array_search($record['venue'], array_column($track,0));
+				if ($tracknr!==false) {
+					// A translation exists, use it
+					$trackName = $track[$tracknr][1];
+				} else {
+					// Track is not known to us, let's use the stk internal ID name
+					$trackName = $record['venue'];
 				}
+				displayRow(
+					$trackName,
+					$record['venue'],
+					$record['reverse'],
+					$record['mode'],
+					$record['laps'],
+					$record['username'],
+					$record['MIN(fastest_lap)'],
+					$label[$record['reverse']],
+					$label[$record['mode']],
+					$label['more'],
+					$record['MAX(time)'],
+					$record['kart']
+				);
 			}
 
         } else {

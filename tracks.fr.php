@@ -8,7 +8,7 @@ $label = array(
 	'direction' =>		"Direction",
 	'mode' =>		"Mode",
 	'normal' =>		"Normal",
-	'reverse' =>		"inverse",
+	'reverse' =>		"À l'envers",
 	'both' =>		"Les deux",
 	'time-trial' =>		"Contre-la-montre",
 	'recent' =>		"Records récents",
@@ -17,10 +17,10 @@ $label = array(
 	'no' =>			"Non",
 	'submit' =>		"Valider",
 	'icon' =>		"Icone",
-	'user' =>		"Joueur",
-	'result' =>		"Résultat",
+	'user' =>		"Pilote",
+	'result' =>		"Temps",
 	'date' =>		"Date",
-	'more' =>		"plus"
+	'more' =>		"Plus 🔎"
 );
 
 // Define your tracks: STK-ID, readable name, default laps
